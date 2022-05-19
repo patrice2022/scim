@@ -10,7 +10,7 @@
 	<artifactId>scim-serveur</artifactId>
 
 	<properties>
-		<start-class>fr.pay.projet.service1.Service1Daemon</start-class>
+		<start-class>fr.pay.scim.serveur.ScimServeurDaemon</start-class>
 	</properties>
 
 
