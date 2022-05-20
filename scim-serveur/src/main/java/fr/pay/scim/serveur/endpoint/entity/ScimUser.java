@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 @JsonInclude(Include.NON_NULL)
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class ScimUser {
 
 	/**

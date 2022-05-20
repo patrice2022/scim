@@ -1,5 +1,8 @@
 package fr.pay.scim.serveur.endpoint;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -11,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.pay.scim.serveur.endpoint.entity.ScimUser;
+import fr.pay.scim.serveur.exception.ConflictException;
 import fr.pay.scim.serveur.exception.NotFoundException;
 import fr.pay.scim.serveur.exception.NotImplementedException;
 import fr.pay.scim.serveur.exception.ScimException;
@@ -40,15 +44,29 @@ public class UsersEndPoint {
 	@Operation(summary = "search for a user")
 	@ApiResponses(value = { 
 			@ApiResponse(responseCode = "200", description = "The user is found.", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ScimUser.class))}),
-			@ApiResponse(responseCode = "404", description = "User not found", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ScimException.class))})
+			@ApiResponse(responseCode = "404", description = "User not found.", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ScimException.class))})
 	})
 	@GetMapping("/{id}")
 	public ResponseEntity<ScimUser> read(
-			@Parameter(description = "Id of user to be searched.") @PathVariable String id
+			@Parameter(description = "Id of user to be searched.") @PathVariable String id,
+			HttpServletRequest request
 			) throws ScimException {
 		
+		if ("0000".equalsIgnoreCase(id)) {
+			
+			ScimUser scimUser = new ScimUser();
+			scimUser.setId(id);
+			
+			String location = request.getRequestURL().toString();
+			
+			return ResponseEntity
+					.status(HttpStatus.OK)
+					.header("Content-Type", "application/scim+json")
+					.header("Location", location)
+					.body(scimUser);
+		}
 		
-		throw new NotFoundException("Resource does not exist.");
+		throw new NotFoundException("User not found.");
 	}
 
 	
@@ -64,10 +82,22 @@ public class UsersEndPoint {
 			})
 	@PostMapping("")
 	public ResponseEntity<ScimUser> create(
-			@RequestBody @Validated final ScimUser scimUser
+			@RequestBody @Validated final ScimUser scimUser,
+			HttpServletRequest request
 			) throws ScimException {
 
-		throw new NotImplementedException();
+		ScimUser scimUserCreated = new ScimUser();
+		scimUserCreated.setId("0001");
+		
+		String location = request.getRequestURL()+ "/" + scimUserCreated.getId();
+		
+		return ResponseEntity
+				.status(HttpStatus.CREATED)
+				.header("Content-Type", "application/scim+json")
+				.header("Location", location)
+				.body(scimUserCreated);
+		
+//		throw new ConflictException("User already exists.");
 	}
 
 	
