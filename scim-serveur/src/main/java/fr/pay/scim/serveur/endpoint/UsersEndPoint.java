@@ -10,7 +10,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import fr.pay.scim.serveur.entity.user.ScimUser;
+import fr.pay.scim.serveur.endpoint.entity.ScimUser;
+import fr.pay.scim.serveur.exception.NotFoundException;
 import fr.pay.scim.serveur.exception.NotImplementedException;
 import fr.pay.scim.serveur.exception.ScimException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,6 +31,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 @RequestMapping("/Users")
 public class UsersEndPoint {
 
+	
 	//  Read: GET https://example.com/{v}/{resource}/{id}
 	//  RFC : 	200 OK
 	//			Content-Type: application/scim+json
@@ -41,11 +43,12 @@ public class UsersEndPoint {
 			@ApiResponse(responseCode = "404", description = "User not found", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ScimException.class))})
 	})
 	@GetMapping("/{id}")
-	public ResponseEntity<?> read(
+	public ResponseEntity<ScimUser> read(
 			@Parameter(description = "Id of user to be searched.") @PathVariable String id
 			) throws ScimException {
 		
-		throw new NotImplementedException();
+		
+		throw new NotFoundException("Resource does not exist.");
 	}
 
 	
@@ -67,7 +70,6 @@ public class UsersEndPoint {
 		throw new NotImplementedException();
 	}
 
-	
 	
 	//  Replace: PUT https://example.com/{v}/{resource}/{id}
 	//	RFC : 	200 OK

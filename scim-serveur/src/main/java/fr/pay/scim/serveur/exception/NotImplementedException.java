@@ -1,26 +1,15 @@
 package fr.pay.scim.serveur.exception;
 
+import org.springframework.http.HttpStatus;
+
 public class NotImplementedException extends ScimException {
 
 	public NotImplementedException() {
-		super();
+		super(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
-
-	public NotImplementedException(String message, Throwable cause, boolean enableSuppression,
-			boolean writableStackTrace) {
-		super(message, cause, enableSuppression, writableStackTrace);
-	}
-
-	public NotImplementedException(String message, Throwable cause) {
-		super(message, cause);
-	}
-
+	
 	public NotImplementedException(String message) {
-		super(message);
-	}
-
-	public NotImplementedException(Throwable cause) {
-		super(cause);
+		super(HttpStatus.INTERNAL_SERVER_ERROR, message);
 	}
 
 }

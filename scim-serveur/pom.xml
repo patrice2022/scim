@@ -33,7 +33,7 @@
 
 
 		<!-- ================= -->
-		<!-- Swagger Open API  -->
+		<!-- Swagger Open API -->
 		<!-- ================= -->
 
 		<dependency>
@@ -48,7 +48,7 @@
 		</dependency>
 
 		<!-- ================= -->
-		<!-- lombok            -->
+		<!-- lombok -->
 		<!-- ================= -->
 
 		<dependency>
@@ -56,6 +56,16 @@
 			<artifactId>lombok</artifactId>
 			<scope>provided</scope>
 		</dependency>
-		
+
+
+
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
+
+
 </project>

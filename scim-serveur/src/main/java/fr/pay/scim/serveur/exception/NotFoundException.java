@@ -1,26 +1,15 @@
 package fr.pay.scim.serveur.exception;
 
+import org.springframework.http.HttpStatus;
+
 public class NotFoundException extends ScimException {
 
 	public NotFoundException() {
-		super();
-	}
-
-	public NotFoundException(String message, Throwable cause, boolean enableSuppression,
-			boolean writableStackTrace) {
-		super(message, cause, enableSuppression, writableStackTrace);
-	}
-
-	public NotFoundException(String message, Throwable cause) {
-		super(message, cause);
+		super(HttpStatus.NOT_FOUND);
 	}
 
 	public NotFoundException(String message) {
-		super(message);
-	}
-
-	public NotFoundException(Throwable cause) {
-		super(cause);
+		super(HttpStatus.NOT_FOUND, message);
 	}
 
 }

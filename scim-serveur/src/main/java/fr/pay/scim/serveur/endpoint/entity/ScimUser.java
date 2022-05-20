@@ -1,4 +1,4 @@
-package fr.pay.scim.serveur.entity.user;
+package fr.pay.scim.serveur.endpoint.entity;
 
 import javax.validation.constraints.Pattern;
 

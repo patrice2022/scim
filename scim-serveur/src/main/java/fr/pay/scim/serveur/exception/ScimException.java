@@ -1,25 +1,21 @@
 package fr.pay.scim.serveur.exception;
 
-public class ScimException extends Exception {
+import org.springframework.http.HttpStatus;
 
-	public ScimException() {
+import lombok.Data;
+
+@Data
+public abstract class ScimException extends Exception {
+
+	private HttpStatus status = null;
+	
+	public ScimException(HttpStatus status) {
 		super();
+		this.status = status;
 	}
 
-	public ScimException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-		super(message, cause, enableSuppression, writableStackTrace);
-	}
-
-	public ScimException(String message, Throwable cause) {
-		super(message, cause);
-	}
-
-	public ScimException(String message) {
+	public ScimException(HttpStatus status, String message) {
 		super(message);
+		this.status = status;
 	}
-
-	public ScimException(Throwable cause) {
-		super(cause);
-	}
-
 }
