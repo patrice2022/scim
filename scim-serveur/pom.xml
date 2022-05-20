@@ -31,5 +31,31 @@
 			<scope>provided</scope>
 		</dependency>
 
+
+		<!-- ================= -->
+		<!-- Swagger Open API  -->
+		<!-- ================= -->
+
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-ui</artifactId>
+			<version>1.6.8</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-ui</artifactId>
+			<version>1.6.8</version>
+		</dependency>
+
+		<!-- ================= -->
+		<!-- lombok            -->
+		<!-- ================= -->
+
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		
 	</dependencies>
 </project>
