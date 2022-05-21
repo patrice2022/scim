@@ -2,6 +2,7 @@ package fr.pay.scim.serveur.endpoint;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -13,11 +14,14 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import fr.pay.scim.serveur.endpoint.entity.ScimGroup;
 import fr.pay.scim.serveur.endpoint.entity.ScimUser;
 import fr.pay.scim.serveur.exception.ConflictException;
 import fr.pay.scim.serveur.exception.NotFoundException;
 import fr.pay.scim.serveur.exception.NotImplementedException;
 import fr.pay.scim.serveur.exception.ScimException;
+import fr.pay.scim.serveur.service.UsersService;
+import fr.pay.scim.serveur.service.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -33,7 +37,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
  */
 @RestController
 @RequestMapping("/Users")
-public class UsersEndPoint {
+public class UsersEndPoint extends ResourceEndPoint<ScimUser, UsersService> {
+
+	public UsersEndPoint(UsersService resourceService) {
+		super(resourceService);
+	}
 
 	
 	//  Read: GET https://example.com/{v}/{resource}/{id}
@@ -52,23 +60,11 @@ public class UsersEndPoint {
 			HttpServletRequest request
 			) throws ScimException {
 		
-		if ("0000".equalsIgnoreCase(id)) {
-			
-			ScimUser scimUser = new ScimUser();
-			scimUser.setId(id);
-			
-			String location = request.getRequestURL().toString();
-			
-			return ResponseEntity
-					.status(HttpStatus.OK)
-					.header("Content-Type", "application/scim+json")
-					.header("Location", location)
-					.body(scimUser);
-		}
-		
-		throw new NotFoundException("User not found.");
+		return readResource(id, request);
 	}
 
+	
+	
 	
 	//  Create: POST https://example.com/{v}/{resource}
 	//  RFC : 	201 Created
