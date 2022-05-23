@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import fr.pay.scim.serveur.endpoint.entity.ScimError;
 import fr.pay.scim.serveur.endpoint.entity.ScimUser;
 import fr.pay.scim.serveur.exception.NotFoundException;
 import fr.pay.scim.serveur.exception.NotImplementedException;
@@ -53,7 +54,7 @@ public class UsersEndPoint {
 	@Operation(summary = "search for a user")
 	@ApiResponses(value = { 
 			@ApiResponse(responseCode = "200", description = "The user is found.", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ScimUser.class))}),
-			@ApiResponse(responseCode = "404", description = "User not found.", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ScimException.class))})
+			@ApiResponse(responseCode = "404", description = "User not found.", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ScimError.class))})
 	})
 	@GetMapping("/{id}")
 	public ResponseEntity<ScimUser> read(
@@ -88,7 +89,7 @@ public class UsersEndPoint {
 //	@Operation(summary = "Creation of a user.")
 //	@ApiResponses(value = { 
 //			@ApiResponse(responseCode = "201", description = "The user is created.", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ScimUser.class))}),
-//			@ApiResponse(responseCode = "409", description = "User already exists.", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ScimException.class))})
+//			@ApiResponse(responseCode = "409", description = "User already exists.", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ScimError.class))})
 //			})
 //	@PostMapping("")
 //	public ResponseEntity<ScimUser> create(
@@ -119,7 +120,7 @@ public class UsersEndPoint {
 //	@Operation(summary = "Replacing a user.")
 //	@ApiResponses(value = { 
 //			@ApiResponse(responseCode = "200", description = "The user's has been updated.", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ScimUser.class))}),
-//			@ApiResponse(responseCode = "404", description = "User not found.", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ScimException.class))})
+//			@ApiResponse(responseCode = "404", description = "User not found.", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ScimError.class))})
 //			})
 //	@PutMapping("/{id}")
 //	public ResponseEntity<ScimUser> replace(
@@ -139,7 +140,7 @@ public class UsersEndPoint {
 //	@Operation(summary = "Deleting a user.")
 //	@ApiResponses(value = { 
 //			@ApiResponse(responseCode = "204", description = "User deleted.", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ScimUser.class))}),
-//			@ApiResponse(responseCode = "404", description = "User not found.", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ScimException.class))})
+//			@ApiResponse(responseCode = "404", description = "User not found.", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ScimError.class))})
 //			})
 //	@DeleteMapping("/{id}")
 //	public ResponseEntity<ScimUser> delete(

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import fr.pay.scim.serveur.endpoint.entity.ScimError;
 import fr.pay.scim.serveur.endpoint.entity.ScimGroup;
 import fr.pay.scim.serveur.endpoint.entity.ScimUser;
 import fr.pay.scim.serveur.exception.NotFoundException;
@@ -45,7 +46,7 @@ public class GroupsEndPoint {
 	@Operation(summary = "search for a group")
 	@ApiResponses(value = { 
 			@ApiResponse(responseCode = "200", description = "The group is found.", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ScimGroup.class))}),
-			@ApiResponse(responseCode = "404", description = "Group not found.", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ScimException.class))})
+			@ApiResponse(responseCode = "404", description = "Group not found.", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ScimError.class))})
 	})
 	@GetMapping("/{id}")
 	public ResponseEntity<ScimGroup> read(
