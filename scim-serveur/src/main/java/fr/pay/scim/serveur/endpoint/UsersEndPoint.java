@@ -1,5 +1,7 @@
 package fr.pay.scim.serveur.endpoint;
 
+import java.util.UUID;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.http.HttpStatus;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,7 +26,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
@@ -43,7 +45,6 @@ public class UsersEndPoint {
 	public UsersEndPoint(UsersService usersService) {
 		this.usersService = usersService;
 	}
-
 	
 	
 	//  Read: GET https://example.com/{v}/{resource}/{id}
@@ -69,6 +70,7 @@ public class UsersEndPoint {
 		}
 		
 		String location = request.getRequestURL().toString();
+		scimUser.getMeta().setLocation(location);
 		
 		return ResponseEntity
 				.status(HttpStatus.OK)
@@ -79,59 +81,56 @@ public class UsersEndPoint {
 	}
 
 	
+	//  Create: POST https://example.com/{v}/{resource}
+	//  RFC : 	201 Created
+	//			Content-Type: application/scim+json
+	//			Location: https://example.com/v2/Users/2819c223-7f76-453a-919d-413861904646
+	//          ETag: W/"e180ee84f0671b1"
+	@Operation(summary = "Creation of a user.")
+	@ApiResponses(value = { 
+			@ApiResponse(responseCode = "201", description = "The user is created.", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ScimUser.class))}),
+			@ApiResponse(responseCode = "409", description = "User already exists.", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ScimError.class))})
+			})
+	@PostMapping("")
+	public ResponseEntity<ScimUser> create(
+			@RequestBody @Validated ScimUser scimUser,
+			HttpServletRequest request
+			) throws ScimException {
+
+		scimUser = usersService.create(scimUser);
+		
+		String location = request.getRequestURL()+ "/" + scimUser.getId();
+		scimUser.getMeta().setLocation(location);
+		
+		return ResponseEntity
+				.status(HttpStatus.CREATED)
+				.header("Content-Type", "application/scim+json")
+				.header("Location", location)
+				.body(scimUser);
+	}
+
 	
 	
-//	//  Create: POST https://example.com/{v}/{resource}
-//	//  RFC : 	201 Created
-//	//			Content-Type: application/scim+json
-//	//			Location: https://example.com/v2/Users/2819c223-7f76-453a-919d-413861904646
-//	//          ETag: W/"e180ee84f0671b1"
-//	@Operation(summary = "Creation of a user.")
-//	@ApiResponses(value = { 
-//			@ApiResponse(responseCode = "201", description = "The user is created.", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ScimUser.class))}),
-//			@ApiResponse(responseCode = "409", description = "User already exists.", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ScimError.class))})
-//			})
-//	@PostMapping("")
-//	public ResponseEntity<ScimUser> create(
-//			@RequestBody @Validated final ScimUser scimUser,
-//			HttpServletRequest request
-//			) throws ScimException {
-//
-//		ScimUser scimUserCreated = new ScimUser();
-//		scimUserCreated.setId("0001");
-//		
-//		String location = request.getRequestURL()+ "/" + scimUserCreated.getId();
-//		
-//		return ResponseEntity
-//				.status(HttpStatus.CREATED)
-//				.header("Content-Type", "application/scim+json")
-//				.header("Location", location)
-//				.body(scimUserCreated);
-//		
-////		throw new ConflictException("User already exists.");
-//	}
-//
-//	
-//	//  Replace: PUT https://example.com/{v}/{resource}/{id}
-//	//	RFC : 	200 OK
-//	//	   		Content-Type: application/scim+json
-//	//	   		Location: "https://example.com/v2/Users/2819c223-7f76-453a-919d-413861904646"
-//	//	   		ETag: W/"b431af54f0671a2"
-//	@Operation(summary = "Replacing a user.")
-//	@ApiResponses(value = { 
-//			@ApiResponse(responseCode = "200", description = "The user's has been updated.", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ScimUser.class))}),
-//			@ApiResponse(responseCode = "404", description = "User not found.", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ScimError.class))})
-//			})
-//	@PutMapping("/{id}")
-//	public ResponseEntity<ScimUser> replace(
-//			@Parameter(description = "Id of user to be searched.") @PathVariable String id,
-//			@RequestBody @Validated final ScimUser scimUser
-//			) throws ScimException {
-//
-//		throw new NotImplementedException();
-//	}
-//
-//	
+	//  Replace: PUT https://example.com/{v}/{resource}/{id}
+	//	RFC : 	200 OK
+	//	   		Content-Type: application/scim+json
+	//	   		Location: "https://example.com/v2/Users/2819c223-7f76-453a-919d-413861904646"
+	//	   		ETag: W/"b431af54f0671a2"
+	@Operation(summary = "Replacing a user.")
+	@ApiResponses(value = { 
+			@ApiResponse(responseCode = "200", description = "The user's has been updated.", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ScimUser.class))}),
+			@ApiResponse(responseCode = "404", description = "User not found.", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ScimError.class))})
+			})
+	@PutMapping("/{id}")
+	public ResponseEntity<ScimUser> replace(
+			@Parameter(description = "Id of user to be searched.") @PathVariable String id,
+			@RequestBody @Validated final ScimUser scimUser
+			) throws ScimException {
+
+		throw new NotImplementedException();
+	}
+
+	
 //// Update: PATCH https://example.com/{v}/{resource}/{id}	
 //	
 //	

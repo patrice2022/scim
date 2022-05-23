@@ -1,12 +1,15 @@
 package fr.pay.scim.serveur.endpoint.entity;
 
+import java.util.Arrays;
+import java.util.List;
+
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -47,5 +50,55 @@ public class ScimUser {
 	 * assumed that the value's uniqueness is controlled by the client setting the
 	 * value.
 	 */
+	@Schema(accessMode = Schema.AccessMode.READ_WRITE)
 	private String externalId;
+	
+	/**
+	 * A complex attribute containing resource metadata. All "meta" sub-attributes
+	 * are assigned by the service provider (have a "mutability" of "readOnly"), and
+	 * all of these sub-attributes have a "returned" characteristic of "default".
+	 * 
+	 * This attribute SHALL be ignored when provided by clients.
+	 */
+	@Schema(accessMode = Schema.AccessMode.READ_ONLY)
+	private ScimUserMeta meta;
+
+	/**
+	 * SCIM provides a resource type for "User" resources. The core schema for
+	 * "User" is identified using the following schema URI:
+	 * "urn:ietf:params:scim:schemas:core:2.0:User".
+	 */
+	@Schema(accessMode = Schema.AccessMode.READ_ONLY)
+	private List<String> schemas = Arrays.asList("urn:ietf:params:scim:schemas:core:2.0:User");
+
+	/**
+	 * A service provider's unique identifier for the user, typically used by the
+	 * user to directly authenticate to the service provider. Often displayed to the
+	 * user as their unique identifier within the system (as opposed to "id" or
+	 * "externalId", which are generally opaque and not user-friendly identifiers).
+	 * Each User MUST include a non-empty userName value. This identifier MUST be
+	 * unique across the service provider's entire set of Users. This attribute is
+	 * REQUIRED and is case insensitive.
+	 * 
+	 * <pre>
+	 * 		"name" : "userName",
+	 * 		"type" : "string",
+	 * 		"multiValued" : false,
+	 * 		"description" : "Unique identifier for the User, typically
+	 * 			used by the user to directly authenticate to the service provider.
+	 * 			Each User MUST include a non-empty userName value.  This identifier
+	 * 			MUST be unique across the service provider's entire set of Users.
+	 * 			REQUIRED.",
+	 * 		"required" : true,
+	 * 		"caseExact" : false,
+	 * 		"mutability" : "readWrite",
+	 * 		"returned" : "default",
+	 * 		"uniqueness" : "server"
+	 * </pre>
+	 */
+	@NotEmpty
+	@Pattern(regexp="^[0-9a-z]{8}$", message="username Invalide")
+	@Schema(accessMode = Schema.AccessMode.READ_WRITE)
+	private String userName;
+	
 }
