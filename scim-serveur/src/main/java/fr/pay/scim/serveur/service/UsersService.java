@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
-public class UsersService extends ResourceService<ScimUser> {
+public class UsersService {
 
 	private Map<String, User> users = new HashMap<>();
 	

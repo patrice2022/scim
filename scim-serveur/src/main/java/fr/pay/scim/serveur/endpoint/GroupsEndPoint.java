@@ -2,7 +2,6 @@ package fr.pay.scim.serveur.endpoint;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,10 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.pay.scim.serveur.endpoint.entity.ScimGroup;
+import fr.pay.scim.serveur.endpoint.entity.ScimUser;
 import fr.pay.scim.serveur.exception.NotFoundException;
 import fr.pay.scim.serveur.exception.ScimException;
 import fr.pay.scim.serveur.service.GroupsService;
-import fr.pay.scim.serveur.service.entity.Group;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -29,16 +28,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
  */
 @RestController
 @RequestMapping("/Groups")
-public class GroupsEndPoint extends ResourceEndPoint<ScimGroup, GroupsService> {
+public class GroupsEndPoint {
 
 	private GroupsService groupsService;
 	
-	public GroupsEndPoint(GroupsService resourceService) {
-		super(resourceService);
-		this.groupsService = resourceService;
+	public GroupsEndPoint(GroupsService groupsService) {
+		this.groupsService = groupsService;
 	}
 
-	
 	
 	//  Read: GET https://example.com/{v}/{resource}/{id}
 	//  RFC : 	200 OK
@@ -56,7 +53,20 @@ public class GroupsEndPoint extends ResourceEndPoint<ScimGroup, GroupsService> {
 			HttpServletRequest request
 			) throws ScimException {
 		
-		return readResource(id, request);
+		ScimGroup scimGroup = groupsService.read(id);
+		
+		if (scimGroup == null) {
+			throw new NotFoundException("Group not found.");			
+		}
+		
+		String location = request.getRequestURL().toString();
+		
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.header("Content-Type", "application/scim+json")
+				.header("Location", location)
+				.body(scimGroup);
+
 	}
 	
 }
