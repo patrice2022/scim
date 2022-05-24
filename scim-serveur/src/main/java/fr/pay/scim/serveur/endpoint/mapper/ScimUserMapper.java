@@ -14,103 +14,76 @@ import fr.pay.scim.serveur.service.entity.User;
 @Service
 public class ScimUserMapper {
 
-	public ScimUser mapper(User user, String location) {
-		
-		ScimUser scimUser = new ScimUser();
-		
-		scimUser.setId(user.getId());
-		
-		scimUser.setExternalId(user.getExternalId());
-		
+
+	private ScimUserMeta mapperMeta(User user, String location) {
 		ScimUserMeta scimMeta = new ScimUserMeta();
-		scimMeta.setCreated(user.getCreateTimeStamp());
+		scimMeta.setCreated(user.getCreated());
 		scimMeta.setLastModified(user.getLastModified());
 		scimMeta.setLocation(location);
-		scimMeta.setVersion(null);                               // -> a completer
-		scimUser.setMeta(scimMeta);
-
-		scimUser.setSchemas(Arrays.asList("urn:ietf:params:scim:schemas:core:2.0:User"));
-		
-		scimUser.setUserName(user.getUsername());
-		
-		if (user.getLastName() != null || user.getFirstName() != null) {
-			ScimName scimName = new ScimName();
-			scimName.setFormatted(null);                               // -> a completer
-			scimName.setFamilyName(user.getLastName());
-			scimName.setMiddleName(null);                              // -> a completer
-			scimName.setGivenName(user.getFirstName());
-			scimName.setHonorificPrefix(null);                         // -> a completer
-			scimName.setHonorificSuffix(null);                         // -> a completer
-			scimUser.setName(scimName);
+		scimMeta.setVersion(null);
+		return scimMeta;
+	}
+	
+	private ScimName mapperName(User user) {
+		ScimName scimName = null;
+		if (user.getFamilyName() != null || user.getGivenName() != null) {
+			scimName = new ScimName();
+			scimName.setFormatted(null);
+			scimName.setFamilyName(user.getFamilyName());
+			scimName.setMiddleName(null);
+			scimName.setGivenName(user.getGivenName());
+			scimName.setHonorificPrefix(null);
+			scimName.setHonorificSuffix(null);
 		}
-		scimUser.setDisplayName(user.getDisplayName());
-		
-//		private String nickName;
-//		private URI profileUrl;
-		
-		scimUser.setTitle(user.getTitle());
-		
-//		private String userType;
-//		private String preferredLanguage;
-//		private String locale;
-//		private String timezone;
-		
-		scimUser.setActive(true);
-		
-//		private String password;
-
+		return scimName;
+	}
+	
+	private List<ScimEmail> mapperEmail(User user) {
+		List<ScimEmail> emails = null;
 		if (user.getEmail() != null || user.getEmail() != null) {
 			ScimEmail scimEmail = new ScimEmail();
 			scimEmail.setValue(user.getEmail());
 			scimEmail.setPrimary(true);
 			scimEmail.setType("work");
-			scimEmail.setDisplay(null);                                // -> a completer
-			scimUser.setEmails(Arrays.asList(scimEmail));
+			scimEmail.setDisplay(null);
+			emails = Arrays.asList(scimEmail);
 		}
-		
-//		private List<ScimPhoneNumber> phoneNumbers;
-//		private List<ScimIms> ims;
-//		private List<ScimPhoto> photos;
-//		private List<ScimAddress> addresses;
-//		private List<ScimUserGroup> groups;
-//		private List<ScimEntitlement> entitlements;
-//		private List<ScimRole> roles;
-//		private List<ScimX509Certificate> x509Certificates;
-
+		return emails;
+	}
+	
+	
+	public ScimUser mapper(User user, String location) {
+		ScimUser scimUser = new ScimUser();
+		scimUser.setId(user.getId());
+		scimUser.setExternalId(user.getExternalId());
+		scimUser.setMeta(mapperMeta(user, location));
+ 		scimUser.setSchemas(Arrays.asList("urn:ietf:params:scim:schemas:core:2.0:User"));
+		scimUser.setUserName(user.getUserName());
+		scimUser.setName(mapperName(user));
+		scimUser.setDisplayName(user.getDisplayName());
+		scimUser.setTitle(user.getTitle());
+		scimUser.setActive(true);
+		scimUser.setEmails(mapperEmail(user));
 		return scimUser;
 	}
 	
 	
 	
-	
-	
+
 	public User mapper(ScimUser scimUser) {
-		
 		User user = new User();
-		
-		// id;
 		user.setId(scimUser.getId());
-			
-		// externalId;
 		user.setExternalId(scimUser.getExternalId());	
-		
-		// userName;
-		user.setUsername(scimUser.getUserName());
-		
-		//	displayName;
-		user.setDisplayName(scimUser.getDisplayName());
-
-		// firstName, lastName
-		ScimName scimName = scimUser.getName();
-		if (scimName != null) {
-			user.setFirstName(scimName.getGivenName());
-			user.setLastName(scimName.getFamilyName());
+		user.setUserName(scimUser.getUserName());
+		if (scimUser.getName() != null) {
+			user.setGivenName(scimUser.getName().getGivenName());
+			user.setFamilyName(scimUser.getName().getFamilyName());
 		}
-
-		// email
-		List<ScimEmail> scimEmails = scimUser.getEmails();
-		if (scimEmails != null) {
-			ScimEmail scimEmail = scimEmails.stream()
+		user.setDisplayName(scimUser.getDisplayName());
+		user.setTitle(scimUser.getTitle());
+		user.setActive(scimUser.getActive());
+		if (scimUser.getEmails() != null) {
+			ScimEmail scimEmail = scimUser.getEmails().stream()
 								.filter(e -> "work".equalsIgnoreCase(e.getType()))
 								.findFirst()
 								.orElse(null);
@@ -118,15 +91,6 @@ public class ScimUserMapper {
 				user.setEmail(scimEmail.getValue());
 			}				
 		}
-		
-		// title;
-		user.setTitle(scimUser.getTitle());
-		
-		// created;
-		
-		// lastModified;
-
-		
 		return user;
 	}
 

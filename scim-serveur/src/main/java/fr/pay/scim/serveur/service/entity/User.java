@@ -9,24 +9,27 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class User {
 
-	private String id;
-
+	private String id;	
+	
 	private String externalId;
 	
-	private String username;
+	private Date created = new Date();		
 	
-	private String firstName;
+	private Date lastModified = new Date();
 	
-	private String lastName;
+	private String userName;	
+	
+	private String familyName;
+	
+	private String givenName;
 	
 	private String displayName;
 	
 	private String title;
 	
+	private Boolean active;
+	
 	private String email;
 	
-	private Date createTimeStamp = new Date();
-	
-	private Date lastModified = new Date();
-		
+
 }

@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
+import fr.pay.scim.serveur.endpoint.entity.user.ScimEmail;
 import fr.pay.scim.serveur.endpoint.entity.user.ScimName;
 import fr.pay.scim.serveur.endpoint.entity.user.ScimUser;
 import fr.pay.scim.serveur.endpoint.entity.user.ScimUserMeta;
@@ -23,14 +24,17 @@ public class UsersService {
 		super();
 		
 		User user = new User();
-		user.setId("0000");
-		user.setExternalId("123456");
-		user.setUsername("jbtoto");
-		user.setFirstName("Patrice");
-		user.setLastName("AUBRY");
-		user.setDisplayName("patrice AUBRY");
+		user.setId("0d3d948d-a671-49af-a5b5-f740f08bc8f3");
+		user.setExternalId("0000012345");
+		user.setUserName("greenzebra547");
+		user.setGivenName("Amanda");
+		user.setFamilyName("SMITH");
+		user.setDisplayName("Amanda SMITH");
+		user.setTitle("Architecte technique");
+		user.setActive(true);
+		user.setEmail("amanda.smith@example.com");
 		
-		users.put("0000", user);
+		users.put(user.getId(), user);
 	}
 
 

@@ -31,7 +31,6 @@ public class ScimUser {
 	 * The attribute characteristics are "caseExact" as "true", a mutability of "readOnly", and a
 	 * "returned" characteristic of "always".
 	 */
-	@Pattern(regexp="^[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}$", message="id Invalide")
 	@Schema(accessMode = Schema.AccessMode.READ_ONLY)
 	private String id;
 	
@@ -50,7 +49,6 @@ public class ScimUser {
 	 * assumed that the value's uniqueness is controlled by the client setting the
 	 * value.
 	 */
-	@Schema(accessMode = Schema.AccessMode.READ_WRITE)
 	private String externalId;
 	
 	/**
@@ -97,8 +95,6 @@ public class ScimUser {
 	 * </pre>
 	 */
 	@NotEmpty
-	@Pattern(regexp="^[0-9a-z]{8}$", message="username Invalide")
-	@Schema(accessMode = Schema.AccessMode.READ_WRITE)
 	private String userName;
 	
 	/**
@@ -126,7 +122,6 @@ public class ScimUser {
 	 * 		"uniqueness" : "none"
 	 * </pre>
 	 */
-	@Schema(accessMode = Schema.AccessMode.READ_WRITE)
 	private ScimName name;
 	
 	/**
@@ -152,7 +147,6 @@ public class ScimUser {
 	 * 		"uniqueness" : "none"
 	 * </pre>
 	 */
-	@Schema(accessMode = Schema.AccessMode.READ_WRITE)
 	private String displayName;
 
 	
@@ -176,7 +170,6 @@ public class ScimUser {
 	 * 		"uniqueness" : "none"
 	 * </pre>
 	 */
-//	@Schema(accessMode = Schema.AccessMode.READ_WRITE)
 //	private String nickName;
 
 	/**
@@ -199,7 +192,6 @@ public class ScimUser {
 	 * 		"uniqueness" : "none"
 	 * </pre>
 	 */
-//	@Schema(accessMode = Schema.AccessMode.READ_WRITE)
 //	private URI profileUrl;
 
 	/**
@@ -218,7 +210,6 @@ public class ScimUser {
 	 * 		"uniqueness" : "none"
 	 * </pre>
 	 */
-	@Schema(accessMode = Schema.AccessMode.READ_WRITE)
 	private String title;
 
 	/**
@@ -241,8 +232,7 @@ public class ScimUser {
 	 * 		"uniqueness" : "none"
 	 * </pre>
 	 */
-	@Schema(accessMode = Schema.AccessMode.READ_WRITE)
-	private String userType;
+//	private String userType;
 
 	/**
 	 * Indicates the user's preferred written or spoken languages and is generally
@@ -271,7 +261,6 @@ public class ScimUser {
 	 * 		"uniqueness" : "none"
 	 * </pre>
 	 */
-//	@Schema(accessMode = Schema.AccessMode.READ_WRITE)
 //	private String preferredLanguage;
 
 	/**
@@ -308,7 +297,6 @@ public class ScimUser {
 	 * 		"uniqueness" : "none"
 	 * </pre>
 	 */
-//	@Schema(accessMode = Schema.AccessMode.READ_WRITE)
 //	private String locale;
 
 	/**
@@ -329,7 +317,6 @@ public class ScimUser {
 	 * 		"uniqueness" : "none"
 	 * </pre>
 	 */
-//	@Schema(accessMode = Schema.AccessMode.READ_WRITE)
 //	private String timezone;
 
 	/**
@@ -349,7 +336,6 @@ public class ScimUser {
 	 * 		"returned" : "default
 	 * </pre>
 	 */
-	@Schema(accessMode = Schema.AccessMode.READ_WRITE)
 	private Boolean active;
 
 	/**
@@ -427,7 +413,6 @@ public class ScimUser {
 	 * 		"uniqueness" : "none"
 	 * </pre>
 	 */
-	@Schema(accessMode = Schema.AccessMode.READ_WRITE)
 	private List<ScimEmail> emails;
 
 	/**
@@ -450,7 +435,6 @@ public class ScimUser {
 	 * 		"returned" : "default"
 	 * </pre>
 	 */
-//	@Schema(accessMode = Schema.AccessMode.READ_WRITE)
 //	private List<ScimPhoneNumber> phoneNumbers;
 
 	/**
@@ -468,7 +452,6 @@ public class ScimUser {
 	 * 		"returned" : "default"
 	 * </pre>
 	 */
-//	@Schema(accessMode = Schema.AccessMode.READ_WRITE)
 //	private List<ScimIms> ims;
 
 	/**
@@ -494,7 +477,6 @@ public class ScimUser {
 	 * 		"returned" : "default"
 	 * </pre>
 	 */
-//	@Schema(accessMode = Schema.AccessMode.READ_WRITE)
 //	private List<ScimPhoto> photos;
 
 	/**
@@ -515,7 +497,6 @@ public class ScimUser {
 	 * 		"uniqueness" : "none"
 	 * </pre>
 	 */
-//	@Schema(accessMode = Schema.AccessMode.READ_WRITE)
 //	private List<ScimAddress> addresses;
 
 	/**
@@ -551,7 +532,6 @@ public class ScimUser {
 	 * ambiguity determine what the user has access to. This value has no canonical
 	 * types, although a type may be useful as a means to scope entitlements.
 	 */
-//	@Schema(accessMode = Schema.AccessMode.READ_WRITE)
 //	private List<ScimEntitlement> entitlements;
 
 	/**
@@ -560,7 +540,6 @@ public class ScimUser {
 	 * is expected that a role value is a String or label representing a collection
 	 * of entitlements. This value has no canonical types.
 	 */
-//	@Schema(accessMode = Schema.AccessMode.READ_WRITE)
 //	private List<ScimRole> roles;
 
 	/**
@@ -570,7 +549,6 @@ public class ScimUser {
 	 * value MUST NOT contain multiple certificates and so does not contain the
 	 * encoding "SEQUENCE OF Certificate" in any guise.
 	 */
-//	@Schema(accessMode = Schema.AccessMode.READ_WRITE)
 //	private List<ScimX509Certificate> x509Certificates;
 
 
