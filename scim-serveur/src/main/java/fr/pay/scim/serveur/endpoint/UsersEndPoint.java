@@ -18,10 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import fr.pay.scim.serveur.endpoint.entity.ScimError;
 import fr.pay.scim.serveur.endpoint.entity.user.ScimUser;
+import fr.pay.scim.serveur.endpoint.mapper.ScimUserMapper;
 import fr.pay.scim.serveur.exception.NotFoundException;
 import fr.pay.scim.serveur.exception.NotImplementedException;
 import fr.pay.scim.serveur.exception.ScimException;
 import fr.pay.scim.serveur.service.UsersService;
+import fr.pay.scim.serveur.service.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -41,9 +43,11 @@ public class UsersEndPoint {
 	
 	private UsersService usersService;
 	
+	private ScimUserMapper mapper;
 	
-	public UsersEndPoint(UsersService usersService) {
+	public UsersEndPoint(UsersService usersService, ScimUserMapper mapper) {
 		this.usersService = usersService;
+		this.mapper = mapper;
 	}
 	
 	
@@ -63,14 +67,14 @@ public class UsersEndPoint {
 			HttpServletRequest request
 			) throws ScimException {
 		
-		ScimUser scimUser = usersService.read(id);
+		User user = usersService.read(id);
 		
-		if (scimUser == null) {
+		if (user == null) {
 			throw new NotFoundException("User not found.");			
 		}
 		
 		String location = request.getRequestURL().toString();
-		scimUser.getMeta().setLocation(location);
+		ScimUser scimUser = mapper.mapper(user, location);
 		
 		return ResponseEntity
 				.status(HttpStatus.OK)
@@ -97,10 +101,12 @@ public class UsersEndPoint {
 			HttpServletRequest request
 			) throws ScimException {
 
-		scimUser = usersService.create(scimUser);
+		
+		User user = mapper.mapper(scimUser);
+		
+		user = usersService.create(user);
 		
 		String location = request.getRequestURL()+ "/" + scimUser.getId();
-		scimUser.getMeta().setLocation(location);
 		
 		return ResponseEntity
 				.status(HttpStatus.CREATED)
@@ -111,26 +117,26 @@ public class UsersEndPoint {
 
 	
 	
-	//  Replace: PUT https://example.com/{v}/{resource}/{id}
-	//	RFC : 	200 OK
-	//	   		Content-Type: application/scim+json
-	//	   		Location: "https://example.com/v2/Users/2819c223-7f76-453a-919d-413861904646"
-	//	   		ETag: W/"b431af54f0671a2"
-	@Operation(summary = "Replacing a user.")
-	@ApiResponses(value = { 
-			@ApiResponse(responseCode = "200", description = "The user's has been updated.", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ScimUser.class))}),
-			@ApiResponse(responseCode = "404", description = "User not found.", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ScimError.class))})
-			})
-	@PutMapping("/{id}")
-	public ResponseEntity<ScimUser> replace(
-			@Parameter(description = "Id of user to be searched.") @PathVariable String id,
-			@RequestBody @Validated final ScimUser scimUser
-			) throws ScimException {
-
-		throw new NotImplementedException();
-	}
-
-	
+//	//  Replace: PUT https://example.com/{v}/{resource}/{id}
+//	//	RFC : 	200 OK
+//	//	   		Content-Type: application/scim+json
+//	//	   		Location: "https://example.com/v2/Users/2819c223-7f76-453a-919d-413861904646"
+//	//	   		ETag: W/"b431af54f0671a2"
+//	@Operation(summary = "Replacing a user.")
+//	@ApiResponses(value = { 
+//			@ApiResponse(responseCode = "200", description = "The user's has been updated.", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ScimUser.class))}),
+//			@ApiResponse(responseCode = "404", description = "User not found.", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ScimError.class))})
+//			})
+//	@PutMapping("/{id}")
+//	public ResponseEntity<ScimUser> replace(
+//			@Parameter(description = "Id of user to be searched.") @PathVariable String id,
+//			@RequestBody @Validated final ScimUser scimUser
+//			) throws ScimException {
+//
+//		throw new NotImplementedException();
+//	}
+//
+//	
 //// Update: PATCH https://example.com/{v}/{resource}/{id}	
 //	
 //	

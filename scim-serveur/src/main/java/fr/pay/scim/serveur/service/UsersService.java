@@ -34,73 +34,44 @@ public class UsersService {
 	}
 
 
-	public ScimUser read(String id) {
-		
-		User user = users.get(id);
-		
-		if (user == null) {
-			return null;
-		}
-		
-		ScimUser scimUser = new ScimUser();
-		scimUser.setId(user.getId());
-		scimUser.setExternalId(user.getExternalId());
-		scimUser.setUserName(user.getUsername());
-		scimUser.setDisplayName(user.getDisplayName());
-		
-		ScimUserMeta scimMeta = new ScimUserMeta();
-		scimMeta.setCreated(user.getCreateTimeStamp());
-		scimMeta.setLastModified(user.getLastModified());
-//		scimMeta.setLocation(location + "/" + id);
-//		scimMeta.setVersion(null);                               // -> a completer
-		scimUser.setMeta(scimMeta);
-
-		ScimName scimName = new ScimName();
-		scimName.setFamilyName(user.getLastName());
-		scimName.setGivenName(user.getFirstName());
-//		scimName.setFormatted(null);
-//		scimName.setHonorificPrefix(null);
-//		scimName.setMiddleName(null);
-//		scimName.setHonorificSuffix(null);
-		scimUser.setName(scimName);
-		
-		return scimUser;
+	public User read(String id) {
+		return users.get(id);
 	}
 
 	
-	public ScimUser create(ScimUser scimUser) {
+	public User create(User user) {
 		
 		String id = UUID.randomUUID().toString();
 		
-		User user = new User();
-		user.setId(id);
-		user.setExternalId(scimUser.getExternalId());
-		user.setUsername(scimUser.getUserName());
-		if (scimUser.getName() != null) {
-			user.setFirstName(scimUser.getName().getGivenName());
-			user.setLastName(scimUser.getName().getFamilyName());
-		}
-		user.setDisplayName(scimUser.getDisplayName());
+
+//		user.setId(id);
+//		user.setExternalId(scimUser.getExternalId());
+//		user.setUsername(scimUser.getUserName());
+//		if (scimUser.getName() != null) {
+//			user.setFirstName(scimUser.getName().getGivenName());
+//			user.setLastName(scimUser.getName().getFamilyName());
+//		}
+//		user.setDisplayName(scimUser.getDisplayName());
 		users.put(id, user);
 		
-		scimUser.setId(id);
+//		scimUser.setId(id);
+//		
+//		ScimUserMeta scimMeta = new ScimUserMeta();
+//		scimMeta.setCreated(user.getCreateTimeStamp());
+//		scimMeta.setLastModified(user.getLastModified());
+////		scimMeta.setLocation(location + "/" + id);
+////		scimMeta.setVersion(null);                               // -> a completer
+//		scimUser.setMeta(scimMeta);
+//		
+//		ScimName scimName = new ScimName();
+//		scimName.setFamilyName(user.getLastName());
+//		scimName.setGivenName(user.getFirstName());
+////		scimName.setFormatted(null);
+////		scimName.setHonorificPrefix(null);
+////		scimName.setMiddleName(null);
+////		scimName.setHonorificSuffix(null);
+//		scimUser.setName(scimName);
 		
-		ScimUserMeta scimMeta = new ScimUserMeta();
-		scimMeta.setCreated(user.getCreateTimeStamp());
-		scimMeta.setLastModified(user.getLastModified());
-//		scimMeta.setLocation(location + "/" + id);
-//		scimMeta.setVersion(null);                               // -> a completer
-		scimUser.setMeta(scimMeta);
-		
-		ScimName scimName = new ScimName();
-		scimName.setFamilyName(user.getLastName());
-		scimName.setGivenName(user.getFirstName());
-//		scimName.setFormatted(null);
-//		scimName.setHonorificPrefix(null);
-//		scimName.setMiddleName(null);
-//		scimName.setHonorificSuffix(null);
-		scimUser.setName(scimName);
-		
-		return scimUser;
+		return user;
 	}
 }

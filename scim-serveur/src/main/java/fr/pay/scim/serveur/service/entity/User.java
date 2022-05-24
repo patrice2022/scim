@@ -21,6 +21,10 @@ public class User {
 	
 	private String displayName;
 	
+	private String title;
+	
+	private String email;
+	
 	private Date createTimeStamp = new Date();
 	
 	private Date lastModified = new Date();

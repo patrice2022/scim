@@ -5,33 +5,28 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @JsonInclude(Include.NON_NULL)
-@Data
+@Data 
 @NoArgsConstructor
 @AllArgsConstructor
-public class ScimGroup {
+public class ScimGroups {
 
-	private String id;
+	private int totalResults;
 	
-	/**
-	 * A human-readable name for the Group. REQUIRED.
-	 */
-	private String displayName;
+	private int itemsPerPage;
 	
-	/**
-	 * A list of members of the Group.
-	 */
-	private List<ScimMember> members;
+	private int startIndex;
 	
+	private List<String> schemas = Arrays.asList("urn:ietf:params:scim:api:messages:2.0:ListResponse");
 	
-	private ScimGroupMeta meta;
+	@JsonProperty(value = "Resources")
+	private List<ScimGroup> resources;
 	
-	
-	private List<String> schemas = Arrays.asList("urn:ietf:params:scim:schemas:core:2.0:Group");
 	
 }
