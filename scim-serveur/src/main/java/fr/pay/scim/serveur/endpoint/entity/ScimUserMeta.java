@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,6 +21,7 @@ public class ScimUserMeta {
 	 * The name of the resource type of the resource. This attribute has a
 	 * mutability of "readOnly" and "caseExact" as "true".
 	 */
+	@Schema(accessMode = Schema.AccessMode.READ_ONLY)
 	private String resourceType = "User";
 
 	/**
@@ -27,6 +29,7 @@ public class ScimUserMeta {
 	 * attribute MUST be a DateTime.
 	 */
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
+	@Schema(accessMode = Schema.AccessMode.READ_ONLY)
 	private Date created;
 
 	/**
@@ -35,12 +38,14 @@ public class ScimUserMeta {
 	 * initial creation, the value MUST be the same as the value of "created".
 	 */
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
+	@Schema(accessMode = Schema.AccessMode.READ_ONLY)
 	private Date lastModified;
 
 	/**
 	 * The URI of the resource being returned. This value MUST be the same as the
 	 * "Content-Location" HTTP response header
 	 */
+	@Schema(accessMode = Schema.AccessMode.READ_ONLY)
 	private String location;
 
 	/**
@@ -55,6 +60,7 @@ public class ScimUserMeta {
 	 * the "version" (entity-tag) as weak by prefixing its opaque value with "W/"
 	 * (case sensitive).
 	 */
+	@Schema(accessMode = Schema.AccessMode.READ_ONLY)
 	private String version;
 
 }

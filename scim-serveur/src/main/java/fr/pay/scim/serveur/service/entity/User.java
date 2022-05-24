@@ -15,6 +15,10 @@ public class User {
 	
 	private String username;
 	
+	private String firstName;
+	
+	private String lastName;
+	
 	private Date createTimeStamp = new Date();
 	
 	private Date lastModified = new Date();

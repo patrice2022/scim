@@ -101,4 +101,31 @@ public class ScimUser {
 	@Schema(accessMode = Schema.AccessMode.READ_WRITE)
 	private String userName;
 	
+	/**
+	 * The components of the user's name. Service providers MAY return just the full
+	 * name as a single string in the formatted sub-attribute, or they MAY return
+	 * just the individual component attributes using the other sub-attributes, or
+	 * they MAY return both. If both variants are returned, they SHOULD be
+	 * describing the same name, with the formatted name indicating how the
+	 * component attributes should be combined.
+	 * 
+	 * <pre>
+	 * 		"name" : "name",
+	 * 		"type" : "complex",
+	 * 		"multiValued" : false,
+	 * 		"description" : "The components of the user's real name.
+	 * 			Providers MAY return just the full name as a single string in the
+	 * 			formatted sub-attribute, or they MAY return just the individual
+	 * 			component attributes using the other sub-attributes, or they MAY
+	 * 			return both.  If both variants are returned, they SHOULD be
+	 * 			describing the same name, with the formatted name indicating how the
+	 * 			component attributes should be combined.",
+	 * 		"required" : false
+	 * 		"mutability" : "readWrite",
+	 * 		"returned" : "default",
+	 * 		"uniqueness" : "none"
+	 * </pre>
+	 */
+	@Schema(accessMode = Schema.AccessMode.READ_WRITE)
+	private ScimName name;
 }

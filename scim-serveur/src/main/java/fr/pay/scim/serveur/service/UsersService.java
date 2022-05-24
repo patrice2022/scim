@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
+import fr.pay.scim.serveur.endpoint.entity.ScimName;
 import fr.pay.scim.serveur.endpoint.entity.ScimUser;
 import fr.pay.scim.serveur.endpoint.entity.ScimUserMeta;
 import fr.pay.scim.serveur.service.entity.User;
@@ -25,7 +26,8 @@ public class UsersService {
 		user.setId("0000");
 		user.setExternalId("123456");
 		user.setUsername("jbtoto");
-		
+		user.setFirstName("Patrice");
+		user.setLastName("AUBRY");
 		users.put("0000", user);
 	}
 
@@ -42,7 +44,7 @@ public class UsersService {
 		scimUser.setId(user.getId());
 		scimUser.setExternalId(user.getExternalId());
 		scimUser.setUserName(user.getUsername());
-		
+				
 		ScimUserMeta scimMeta = new ScimUserMeta();
 		scimMeta.setCreated(user.getCreateTimeStamp());
 		scimMeta.setLastModified(user.getLastModified());
@@ -50,6 +52,14 @@ public class UsersService {
 //		scimMeta.setVersion(null);                               // -> a completer
 		scimUser.setMeta(scimMeta);
 
+		ScimName scimName = new ScimName();
+		scimName.setFamilyName(user.getLastName());
+		scimName.setGivenName(user.getFirstName());
+//		scimName.setFormatted(null);
+//		scimName.setHonorificPrefix(null);
+//		scimName.setMiddleName(null);
+//		scimName.setHonorificSuffix(null);
+		scimUser.setName(scimName);
 		
 		return scimUser;
 	}
@@ -63,6 +73,10 @@ public class UsersService {
 		user.setId(id);
 		user.setExternalId(scimUser.getExternalId());
 		user.setUsername(scimUser.getUserName());
+		if (scimUser.getName() != null) {
+			user.setFirstName(scimUser.getName().getGivenName());
+			user.setLastName(scimUser.getName().getFamilyName());
+		}
 		users.put(id, user);
 		
 		scimUser.setId(id);
@@ -73,6 +87,15 @@ public class UsersService {
 //		scimMeta.setLocation(location + "/" + id);
 //		scimMeta.setVersion(null);                               // -> a completer
 		scimUser.setMeta(scimMeta);
+		
+		ScimName scimName = new ScimName();
+		scimName.setFamilyName(user.getLastName());
+		scimName.setGivenName(user.getFirstName());
+//		scimName.setFormatted(null);
+//		scimName.setHonorificPrefix(null);
+//		scimName.setMiddleName(null);
+//		scimName.setHonorificSuffix(null);
+		scimUser.setName(scimName);
 		
 		return scimUser;
 	}
