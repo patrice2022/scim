@@ -1,4 +1,4 @@
-package fr.pay.scim.serveur.endpoint.entity;
+package fr.pay.scim.serveur.endpoint.entity.user;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;

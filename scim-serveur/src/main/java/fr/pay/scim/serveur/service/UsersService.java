@@ -6,9 +6,9 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
-import fr.pay.scim.serveur.endpoint.entity.ScimName;
-import fr.pay.scim.serveur.endpoint.entity.ScimUser;
-import fr.pay.scim.serveur.endpoint.entity.ScimUserMeta;
+import fr.pay.scim.serveur.endpoint.entity.user.ScimName;
+import fr.pay.scim.serveur.endpoint.entity.user.ScimUser;
+import fr.pay.scim.serveur.endpoint.entity.user.ScimUserMeta;
 import fr.pay.scim.serveur.service.entity.User;
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,6 +28,8 @@ public class UsersService {
 		user.setUsername("jbtoto");
 		user.setFirstName("Patrice");
 		user.setLastName("AUBRY");
+		user.setDisplayName("patrice AUBRY");
+		
 		users.put("0000", user);
 	}
 
@@ -44,7 +46,8 @@ public class UsersService {
 		scimUser.setId(user.getId());
 		scimUser.setExternalId(user.getExternalId());
 		scimUser.setUserName(user.getUsername());
-				
+		scimUser.setDisplayName(user.getDisplayName());
+		
 		ScimUserMeta scimMeta = new ScimUserMeta();
 		scimMeta.setCreated(user.getCreateTimeStamp());
 		scimMeta.setLastModified(user.getLastModified());
@@ -77,6 +80,7 @@ public class UsersService {
 			user.setFirstName(scimUser.getName().getGivenName());
 			user.setLastName(scimUser.getName().getFamilyName());
 		}
+		user.setDisplayName(scimUser.getDisplayName());
 		users.put(id, user);
 		
 		scimUser.setId(id);
