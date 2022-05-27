@@ -1,4 +1,4 @@
-package fr.pay.scim.serveur.service.entity;
+package fr.pay.scim.serveur.service.entity.user;
 
 import java.util.Date;
 
@@ -30,6 +30,5 @@ public class User {
 	private Boolean active;
 	
 	private String email;
-	
 
 }

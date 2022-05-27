@@ -6,7 +6,7 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 
 import fr.pay.scim.serveur.endpoint.entity.group.ScimGroup;
-import fr.pay.scim.serveur.service.entity.Group;
+import fr.pay.scim.serveur.service.entity.group.Group;
 import lombok.extern.slf4j.Slf4j;
 
 @Service

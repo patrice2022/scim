@@ -1,7 +1,5 @@
 package fr.pay.scim.serveur.endpoint;
 
-import java.util.UUID;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.http.HttpStatus;
@@ -20,10 +18,9 @@ import fr.pay.scim.serveur.endpoint.entity.ScimError;
 import fr.pay.scim.serveur.endpoint.entity.user.ScimUser;
 import fr.pay.scim.serveur.endpoint.mapper.ScimUserMapper;
 import fr.pay.scim.serveur.exception.NotFoundException;
-import fr.pay.scim.serveur.exception.NotImplementedException;
 import fr.pay.scim.serveur.exception.ScimException;
 import fr.pay.scim.serveur.service.UsersService;
-import fr.pay.scim.serveur.service.entity.User;
+import fr.pay.scim.serveur.service.entity.user.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -39,15 +36,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 @RestController
 @RequestMapping("/Users")
 public class UsersEndPoint {
-
 	
 	private UsersService usersService;
 	
-	private ScimUserMapper mapper;
+	private ScimUserMapper mapper = new ScimUserMapper();
 	
-	public UsersEndPoint(UsersService usersService, ScimUserMapper mapper) {
+	public UsersEndPoint(UsersService usersService) {
 		this.usersService = usersService;
-		this.mapper = mapper;
 	}
 	
 	
@@ -81,9 +76,11 @@ public class UsersEndPoint {
 				.header("Content-Type", "application/scim+json")
 				.header("Location", location)
 				.body(scimUser);
-
 	}
 
+	
+	
+	
 	
 	//  Create: POST https://example.com/{v}/{resource}
 	//  RFC : 	201 Created
@@ -101,12 +98,12 @@ public class UsersEndPoint {
 			HttpServletRequest request
 			) throws ScimException {
 
-		
 		User user = mapper.mapper(scimUser);
 		
 		user = usersService.create(user);
 		
 		String location = request.getRequestURL()+ "/" + scimUser.getId();
+		scimUser = mapper.mapper(user, location);
 		
 		return ResponseEntity
 				.status(HttpStatus.CREATED)
@@ -117,48 +114,65 @@ public class UsersEndPoint {
 
 	
 	
-//	//  Replace: PUT https://example.com/{v}/{resource}/{id}
-//	//	RFC : 	200 OK
-//	//	   		Content-Type: application/scim+json
-//	//	   		Location: "https://example.com/v2/Users/2819c223-7f76-453a-919d-413861904646"
-//	//	   		ETag: W/"b431af54f0671a2"
-//	@Operation(summary = "Replacing a user.")
-//	@ApiResponses(value = { 
-//			@ApiResponse(responseCode = "200", description = "The user's has been updated.", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ScimUser.class))}),
-//			@ApiResponse(responseCode = "404", description = "User not found.", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ScimError.class))})
-//			})
-//	@PutMapping("/{id}")
-//	public ResponseEntity<ScimUser> replace(
-//			@Parameter(description = "Id of user to be searched.") @PathVariable String id,
-//			@RequestBody @Validated final ScimUser scimUser
-//			) throws ScimException {
-//
-//		throw new NotImplementedException();
-//	}
-//
-//	
+	//  Replace: PUT https://example.com/{v}/{resource}/{id}
+	//	RFC : 	200 OK
+	//	   		Content-Type: application/scim+json
+	//	   		Location: "https://example.com/v2/Users/2819c223-7f76-453a-919d-413861904646"
+	//	   		ETag: W/"b431af54f0671a2"
+	@Operation(summary = "Replacing a user.")
+	@ApiResponses(value = { 
+			@ApiResponse(responseCode = "200", description = "The user's has been updated.", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ScimUser.class))}),
+			@ApiResponse(responseCode = "404", description = "User not found.", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ScimError.class))})
+			})
+	@PutMapping("/{id}")
+	public ResponseEntity<ScimUser> replace(
+			@Parameter(description = "Id of user to be searched.") @PathVariable String id,
+			@RequestBody @Validated ScimUser scimUser,
+			HttpServletRequest request
+			) throws ScimException {
+
+		User user = mapper.mapper(scimUser);
+		
+		user = usersService.update(id, user);
+				
+		String location = request.getRequestURL()+ "/" + scimUser.getId();
+		scimUser = mapper.mapper(user, location);
+
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.header("Content-Type", "application/scim+json")
+				.header("Location", location)
+				.body(scimUser);
+	}
+
+	
+	
 //// Update: PATCH https://example.com/{v}/{resource}/{id}	
 //	
-//	
-//	// Delete: DELETE https://example.com/{v}/{resource}/{id}
-//	// RFC :	204 No Content
-//	@Operation(summary = "Deleting a user.")
-//	@ApiResponses(value = { 
-//			@ApiResponse(responseCode = "204", description = "User deleted.", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ScimUser.class))}),
-//			@ApiResponse(responseCode = "404", description = "User not found.", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ScimError.class))})
-//			})
-//	@DeleteMapping("/{id}")
-//	public ResponseEntity<ScimUser> delete(
-//			@Parameter(description = "User ID") @PathVariable String id
-//			) throws ScimException {
-//		
-//		throw new NotImplementedException();
-//	}
-//	
+	
+	// Delete: DELETE https://example.com/{v}/{resource}/{id}
+	// RFC :	204 No Content
+	@Operation(summary = "Deleting a user.")
+	@ApiResponses(value = { 
+			@ApiResponse(responseCode = "204", description = "User deleted.", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ScimUser.class))}),
+			@ApiResponse(responseCode = "404", description = "User not found.", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ScimError.class))})
+			})
+	@DeleteMapping("/{id}")
+	public ResponseEntity<ScimUser> delete(
+			@Parameter(description = "User ID") @PathVariable String id
+			) throws ScimException {
+		
+		usersService.delete(id);
+		
+		return ResponseEntity
+				.noContent()
+				.build();
+	}
+	
+	
 //	
 //	
 //// Search: GET https://example.com/{v}/{resource}?ﬁlter={attribute}{op}{value}&sortBy={attributeName}&sortOrder={ascending|descending}
 ////  Bulk: POST https://example.com/{v}/Bulk
-	
 	
 }

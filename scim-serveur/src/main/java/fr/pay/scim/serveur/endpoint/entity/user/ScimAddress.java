@@ -144,4 +144,14 @@ public class ScimAddress {
 	private String type;
 	
 	
+	/**
+	 *   @Attribute(description = "A Boolean value indicating the 'primary' " +
+      "or preferred attribute value for this attribute, e.g., the " +
+      "preferred address. The primary attribute value 'true' MUST appear " +
+      "no more than once.",
+      isRequired = false,
+      mutability = AttributeDefinition.Mutability.READ_WRITE,
+      returned = AttributeDefinition.Returned.DEFAULT)
+	 */
+//	private Boolean primary;
 }

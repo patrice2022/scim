@@ -1,4 +1,4 @@
-package fr.pay.scim.serveur.service.entity;
+package fr.pay.scim.serveur.service.entity.group;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

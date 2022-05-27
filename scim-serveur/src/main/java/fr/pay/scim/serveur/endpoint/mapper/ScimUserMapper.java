@@ -9,7 +9,7 @@ import fr.pay.scim.serveur.endpoint.entity.user.ScimEmail;
 import fr.pay.scim.serveur.endpoint.entity.user.ScimName;
 import fr.pay.scim.serveur.endpoint.entity.user.ScimUser;
 import fr.pay.scim.serveur.endpoint.entity.user.ScimUserMeta;
-import fr.pay.scim.serveur.service.entity.User;
+import fr.pay.scim.serveur.service.entity.user.User;
 
 @Service
 public class ScimUserMapper {
