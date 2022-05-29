@@ -20,6 +20,7 @@ public class UsersService {
 		return users.get(id);
 	}
 
+
 	public User create(User user) {
 		user.setId(UUID.randomUUID().toString());
 		users.put(user.getId(), user);

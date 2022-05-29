@@ -27,6 +27,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * https://datatracker.ietf.org/doc/html/rfc7644
@@ -34,6 +35,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
  * @author PAUBRY
  */
 @RestController
+@Slf4j
 @RequestMapping("/Users")
 public class UsersEndPoint {
 	
@@ -98,12 +100,16 @@ public class UsersEndPoint {
 			HttpServletRequest request
 			) throws ScimException {
 
+		log.info("Demande de création de compte : {}", scimUser);
+		
 		User user = mapper.mapper(scimUser);
 		
 		user = usersService.create(user);
 		
-		String location = request.getRequestURL()+ "/" + scimUser.getId();
+		String location = request.getRequestURL()+ "/" + user.getId();
 		scimUser = mapper.mapper(user, location);
+		
+		log.info("Création du compte effectuée : {}", scimUser);
 		
 		return ResponseEntity
 				.status(HttpStatus.CREATED)
@@ -135,7 +141,7 @@ public class UsersEndPoint {
 		
 		user = usersService.update(id, user);
 				
-		String location = request.getRequestURL()+ "/" + scimUser.getId();
+		String location = request.getRequestURL()+ "/" + user.getId();
 		scimUser = mapper.mapper(user, location);
 
 		return ResponseEntity
@@ -161,6 +167,12 @@ public class UsersEndPoint {
 	public ResponseEntity<ScimUser> delete(
 			@Parameter(description = "User ID") @PathVariable String id
 			) throws ScimException {
+		
+		User user = usersService.read(id);
+		
+		if (user == null) {
+			throw new NotFoundException("User not found.");			
+		}
 		
 		usersService.delete(id);
 		

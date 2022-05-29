@@ -62,7 +62,7 @@ public class ScimUserMapper {
 		scimUser.setName(mapperName(user));
 		scimUser.setDisplayName(user.getDisplayName());
 		scimUser.setTitle(user.getTitle());
-		scimUser.setActive(true);
+		scimUser.setActive(user.getActive());
 		scimUser.setEmails(mapperEmail(user));
 		return scimUser;
 	}

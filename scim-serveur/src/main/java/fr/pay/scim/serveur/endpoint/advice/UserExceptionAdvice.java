@@ -1,6 +1,8 @@
 package fr.pay.scim.serveur.endpoint.advice;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -22,4 +24,13 @@ public class UserExceptionAdvice {
 	}
 
 	
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ResponseEntity<ScimError> methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException ex) {
+		 
+        ScimError error = new ScimError();
+		error.setStatus("400");
+		error.setDetail(ex.getMessage());
+		
+		return new ResponseEntity<ScimError>(error, HttpStatus.BAD_REQUEST);
+	}
 }
