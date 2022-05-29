@@ -137,8 +137,13 @@ public class UsersEndPoint {
 			HttpServletRequest request
 			) throws ScimException {
 
-		User user = mapper.mapper(scimUser);
+		User user = usersService.read(id);
 		
+		if (user == null) {
+			throw new NotFoundException("User not found.");			
+		}
+		
+		user = mapper.mapper(scimUser);
 		user = usersService.update(id, user);
 				
 		String location = request.getRequestURL()+ "/" + user.getId();

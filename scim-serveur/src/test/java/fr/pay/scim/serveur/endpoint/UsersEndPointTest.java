@@ -28,7 +28,6 @@ import fr.pay.scim.serveur.service.entity.user.User;
 import lombok.extern.slf4j.Slf4j;
 
 @SpringBootTest
-@Slf4j
 public class UsersEndPointTest {
 
 	private MockMvc mockMvc;
@@ -47,6 +46,7 @@ public class UsersEndPointTest {
 	
 	ScimUser scimUser1 = null;
 	ScimUser scimUser2 = null;
+	ScimUser scimUser3 = null;
 			
 	@BeforeEach
 	public void setUp() {
@@ -56,6 +56,7 @@ public class UsersEndPointTest {
 				.setControllerAdvice(new UserExceptionAdvice())
 				.build();		
 		
+		// User in base
 		user1 = new User();
 		user1.setId("a510f190-aa6d-46b3-924b-4bd3ad7a50e6");
 		user1.setExternalId("9999");
@@ -69,15 +70,21 @@ public class UsersEndPointTest {
 		user1.setLastModified(new Date(1653569543794L + 500L));
 		user1.setActive(true);
 		
+		// User in base
 		scimUser1 = new ScimUser();
-		scimUser1.setUserName("johndo1");
+		scimUser1.setId("a510f190-aa6d-46b3-924b-4bd3ad7a50e6");
+		scimUser1.setUserName("johndo");
 		
+		// User inexistant
 		scimUser2 = new ScimUser();
-		scimUser2.setId("a510f06d-a19a-b346-942b-4bd3e6ad7a50");
+		scimUser2.setId("a510f190-aa6d-47b3-924b-4bd3ad6a50e6");
 		scimUser2.setUserName("johndo2");
 		
+		// User to créate
+		scimUser3 = new ScimUser();
+		scimUser3.setUserName("johndo3");
 		
-		Mockito.when(usersService.read("0000")).thenReturn(null);
+		
 		Mockito.when(usersService.read(user1.getId())).thenReturn(user1);		
 		
 		Mockito.when(usersService.create(any(User.class))).thenAnswer(invocation -> { 
@@ -85,7 +92,7 @@ public class UsersEndPointTest {
 																	u.setId(UUID.randomUUID().toString());
 																	return u; } );
 			
-		Mockito.when(usersService.update(eq(scimUser2.getId()), any())).thenAnswer(invocation -> invocation.getArguments()[1]);
+		Mockito.when(usersService.update(eq(scimUser1.getId()), any())).thenAnswer(invocation -> invocation.getArguments()[1]);
 		
 	}
 	
@@ -103,11 +110,12 @@ public class UsersEndPointTest {
 				.andExpect(status().isOk());
 	}
 
+	
 	@Test
 	void testGet404() throws Exception {
 		
 		mockMvc.perform(MockMvcRequestBuilders
-					.get("/Users/0000")
+					.get("/Users/" + scimUser2.getId())
 					.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound());
 	}
@@ -124,7 +132,7 @@ public class UsersEndPointTest {
 		mockMvc.perform(MockMvcRequestBuilders
 							.post("/Users")
 							.contentType(MediaType.APPLICATION_JSON)
-							.content(objectMapper.writeValueAsString(scimUser1)))
+							.content(objectMapper.writeValueAsString(scimUser3)))
 						.andExpect(status().isCreated());
 	}
 	
@@ -137,12 +145,21 @@ public class UsersEndPointTest {
 	void testPut() throws Exception {
 
 		mockMvc.perform(MockMvcRequestBuilders
-							.put("/Users/" + scimUser2.getId())
+							.put("/Users/" + scimUser1.getId())
 							.contentType(MediaType.APPLICATION_JSON)
-							.content(objectMapper.writeValueAsString(scimUser2)))
+							.content(objectMapper.writeValueAsString(scimUser1)))
 						.andExpect(status().isOk());
 	}
 	
+	@Test
+	void testPutNotFound() throws Exception {
+
+		mockMvc.perform(MockMvcRequestBuilders
+							.put("/Users/" + scimUser2.getId())
+							.contentType(MediaType.APPLICATION_JSON)
+							.content(objectMapper.writeValueAsString(scimUser2)))
+						.andExpect(status().isNotFound());
+	}
 	
 	//-----------------------------------------------------------
 	//  Delete
@@ -162,7 +179,7 @@ public class UsersEndPointTest {
 	void testDeleteNotFound() throws Exception {
 
 		mockMvc.perform(MockMvcRequestBuilders
-							.delete("/Users/0000")
+							.delete("/Users/" + scimUser2.getId())
 							.contentType(MediaType.APPLICATION_JSON))
 						.andExpect(status().isNotFound());
 	}
