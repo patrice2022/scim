@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.UUID;
 
@@ -15,7 +16,6 @@ import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -23,9 +23,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fr.pay.scim.serveur.endpoint.advice.UserExceptionAdvice;
 import fr.pay.scim.serveur.endpoint.entity.user.ScimUser;
+import fr.pay.scim.serveur.endpoint.patch.Operation;
+import fr.pay.scim.serveur.endpoint.patch.PatchOp;
 import fr.pay.scim.serveur.service.UsersService;
 import fr.pay.scim.serveur.service.entity.user.User;
-import lombok.extern.slf4j.Slf4j;
 
 @SpringBootTest
 public class UsersEndPointTest {
@@ -80,7 +81,7 @@ public class UsersEndPointTest {
 		scimUser2.setId("a510f190-aa6d-47b3-924b-4bd3ad6a50e6");
 		scimUser2.setUserName("johndo2");
 		
-		// User to créate
+		// User to create
 		scimUser3 = new ScimUser();
 		scimUser3.setUserName("johndo3");
 		
@@ -161,6 +162,27 @@ public class UsersEndPointTest {
 						.andExpect(status().isNotFound());
 	}
 	
+	
+	//-----------------------------------------------------------
+	//  Put
+	//-----------------------------------------------------------
+	
+	@Test
+	void testPatch() throws Exception {
+		
+		Operation op = new Operation("replace", "/displayName", "John DO");
+		
+		PatchOp patchOp = new PatchOp();
+		patchOp.setOperations(Arrays.asList(op));
+		
+		mockMvc.perform(MockMvcRequestBuilders
+							.patch("/Users/" + scimUser1.getId())
+							.contentType(MediaType.APPLICATION_JSON)
+							.content(objectMapper.writeValueAsString(patchOp)))
+						.andExpect(status().isOk());
+	}
+	
+
 	//-----------------------------------------------------------
 	//  Delete
 	//-----------------------------------------------------------

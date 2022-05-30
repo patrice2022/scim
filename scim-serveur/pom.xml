@@ -55,11 +55,6 @@
 			<artifactId>springdoc-openapi-ui</artifactId>
 			<version>1.6.8</version>
 		</dependency>
-		<dependency>
-			<groupId>org.springdoc</groupId>
-			<artifactId>springdoc-openapi-ui</artifactId>
-			<version>1.6.8</version>
-		</dependency>
 
 		<!-- ================= -->
 		<!-- lombok -->
@@ -71,6 +66,15 @@
 			<scope>provided</scope>
 		</dependency>
 
+		<!-- ================= -->
+		<!-- json-patch -->
+		<!-- ================= -->
+
+		<dependency>
+			<groupId>com.github.java-json-tools</groupId>
+			<artifactId>json-patch</artifactId>
+			<version>1.12</version>
+		</dependency>
 
 		<!-- ================= -->
 		<!-- Mappeur -->
@@ -113,5 +117,5 @@
 			</plugin>
 		</plugins>
 	</build>
-	
+
 </project>

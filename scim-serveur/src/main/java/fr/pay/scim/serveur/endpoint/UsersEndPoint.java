@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import fr.pay.scim.serveur.endpoint.entity.ScimError;
 import fr.pay.scim.serveur.endpoint.entity.user.ScimUser;
 import fr.pay.scim.serveur.endpoint.mapper.ScimUserMapper;
+import fr.pay.scim.serveur.endpoint.patch.PatchOp;
+import fr.pay.scim.serveur.endpoint.patch.PatchProcess;
 import fr.pay.scim.serveur.exception.NotFoundException;
 import fr.pay.scim.serveur.exception.ScimException;
 import fr.pay.scim.serveur.service.UsersService;
@@ -42,6 +45,8 @@ public class UsersEndPoint {
 	private UsersService usersService;
 	
 	private ScimUserMapper mapper = new ScimUserMapper();
+	
+	private PatchProcess patchProcess = new PatchProcess();
 	
 	public UsersEndPoint(UsersService usersService) {
 		this.usersService = usersService;
@@ -158,8 +163,47 @@ public class UsersEndPoint {
 
 	
 	
-//// Update: PATCH https://example.com/{v}/{resource}/{id}	
-//	
+	// Update: PATCH https://example.com/{v}/{resource}/{id}	
+	@Operation(summary = "Patch a user.")
+	@ApiResponses(value = { 
+			@ApiResponse(responseCode = "200", description = "The user's has been updated.", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ScimUser.class))}),
+			@ApiResponse(responseCode = "400", description = "Bad Request.", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ScimError.class))}),
+			@ApiResponse(responseCode = "404", description = "User not found.", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ScimError.class))})
+			})
+	@PatchMapping("/{id}")
+	public ResponseEntity<ScimUser> patch(
+			@Parameter(description = "Id of user to be patched.") @PathVariable String id,
+			@RequestBody PatchOp patchOp,
+			HttpServletRequest request
+			) throws ScimException {
+
+		// On recherche le user
+		User user = usersService.read(id);
+		
+		if (user == null) {
+			throw new NotFoundException("User not found.");			
+		}
+		
+		// Conversion de l'utilisateur dans son format Scim
+		ScimUser scimUser = mapper.mapper(user, null);
+
+		// On récupere le scim de l'utilisateur qui es paché
+		ScimUser scimUserPatched = patchProcess.patch(scimUser, patchOp);
+			
+		// On effectue la sauvegarde
+		user = usersService.update(id, mapper.mapper(scimUserPatched));
+			
+		String location = request.getRequestURL()+ "/" + user.getId();
+		ScimUser scimUserUpdated = mapper.mapper(user, location);
+
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.header("Content-Type", "application/scim+json")
+				.header("Location", location)
+				.body(scimUserUpdated);
+	}
+	
+	
 	
 	// Delete: DELETE https://example.com/{v}/{resource}/{id}
 	// RFC :	204 No Content
@@ -187,8 +231,8 @@ public class UsersEndPoint {
 	}
 	
 	
-//	
-//	
+	
+	
 //// Search: GET https://example.com/{v}/{resource}?ﬁlter={attribute}{op}{value}&sortBy={attributeName}&sortOrder={ascending|descending}
 ////  Bulk: POST https://example.com/{v}/Bulk
 	
