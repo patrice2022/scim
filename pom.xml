@@ -20,5 +20,6 @@
 	
 	<modules>
 		<module>scim-serveur</module>
+		<module>scim-test</module>
 	</modules>
 </project>
