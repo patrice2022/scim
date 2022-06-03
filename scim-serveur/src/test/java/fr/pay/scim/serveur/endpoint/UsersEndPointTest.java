@@ -1,5 +1,6 @@
 package fr.pay.scim.serveur.endpoint;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -27,7 +28,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fr.pay.scim.serveur.endpoint.advice.UserExceptionAdvice;
-import fr.pay.scim.serveur.endpoint.entity.user.ScimName;
 import fr.pay.scim.serveur.endpoint.entity.user.ScimUser;
 import fr.pay.scim.serveur.endpoint.patch.Operation;
 import fr.pay.scim.serveur.endpoint.patch.PatchOp;
@@ -89,6 +89,7 @@ class UsersEndPointTest {
 																u.setId(UUID.randomUUID().toString());
 																return u; } );
 		
+		Mockito.when(usersService.all()).thenReturn(Arrays.asList(new User(), user1, new User(), new User(), new User()));
 		
 		// User in base
 		scimUser1 = new ScimUser();
@@ -101,13 +102,52 @@ class UsersEndPointTest {
 	}
 	
 	
+	
 	//-----------------------------------------------------------
 	//  GET
 	//-----------------------------------------------------------
 	
 	@Test
-	@DisplayName("RFC7644 - Retrouver un utilisateur connu (Ok)")
+	@DisplayName("RFC7644 - Retrouver la liste des utilisateurs (Ok)")
 	void testGet() throws Exception {
+				
+		mockMvc.perform(MockMvcRequestBuilders
+					.get("/Users")
+					.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.totalResults", is(5)))
+				.andExpect(jsonPath("$.itemsPerPage", is(5)))
+				.andExpect(jsonPath("$.startIndex", is(1)))
+				.andExpect(jsonPath("$.Resources", hasSize(5)))
+				.andExpect(jsonPath("$.Resources[1].id", is("a510f190-aa6d-46b3-924b-4bd3ad7a50e6")));
+	}
+	
+	
+	@Test
+	@DisplayName("RFC7644 - Retrouver la liste des utilisateurs avec startIndex et count (Ok)")
+	void testGetWithStartIndex() throws Exception {
+				
+		mockMvc.perform(MockMvcRequestBuilders
+					.get("/Users")
+					.param("startIndex", "2")
+					.param("count", "2")
+					.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.totalResults", is(5)))
+				.andExpect(jsonPath("$.itemsPerPage", is(2)))
+				.andExpect(jsonPath("$.startIndex", is(2)))
+				.andExpect(jsonPath("$.Resources", hasSize(2)))
+				.andExpect(jsonPath("$.Resources[0].id", is("a510f190-aa6d-46b3-924b-4bd3ad7a50e6")));
+	}
+	
+	
+	//-----------------------------------------------------------
+	//  GET {id}
+	//-----------------------------------------------------------
+	
+	@Test
+	@DisplayName("RFC7644 - Retrouver un utilisateur connu (Ok)")
+	void testGetWithId() throws Exception {
 				
 		mockMvc.perform(MockMvcRequestBuilders
 					.get("/Users/" + user1.getId())
@@ -118,7 +158,7 @@ class UsersEndPointTest {
 	
 	@Test
 	@DisplayName("RFC7644 - Retrouver un utilisateur connu (NotFound)")
-	void testGet404() throws Exception {
+	void testGetWithId404() throws Exception {
 		
 		mockMvc.perform(MockMvcRequestBuilders
 					.get("/Users/a510f190-aa6d-47b3-924b-4bd3ad6a50e6")
@@ -184,6 +224,7 @@ class UsersEndPointTest {
 	//-----------------------------------------------------------
 	
 	@Test
+	@DisplayName("RFC7644 - patch displayName (OK)")
 	void testPatch() throws Exception {
 		
 		Operation op = new Operation("replace", "/displayName", "John DO");
@@ -196,6 +237,23 @@ class UsersEndPointTest {
 							.contentType(MediaType.APPLICATION_JSON)
 							.content(objectMapper.writeValueAsString(patchOp)))
 						.andExpect(status().isOk());
+	}
+	
+	
+	@Test
+	@DisplayName("RFC7644 - patch displayName (notFound)")
+	void testPatchNotFound() throws Exception {
+		
+		Operation op = new Operation("replace", "/displayName", "John DO");
+		
+		PatchOp patchOp = new PatchOp();
+		patchOp.setOperations(Arrays.asList(op));
+		
+		mockMvc.perform(MockMvcRequestBuilders
+							.patch("/Users/a510f190-aa6d-47b3-924b-4bd3ad6a50e6")
+							.contentType(MediaType.APPLICATION_JSON)
+							.content(objectMapper.writeValueAsString(patchOp)))
+						.andExpect(status().isNotFound());
 	}
 	
 

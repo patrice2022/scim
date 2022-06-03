@@ -1,5 +1,8 @@
 package fr.pay.scim.serveur.endpoint;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.http.HttpStatus;
@@ -13,10 +16,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.pay.scim.serveur.endpoint.entity.ScimError;
 import fr.pay.scim.serveur.endpoint.entity.user.ScimUser;
+import fr.pay.scim.serveur.endpoint.entity.user.ScimUsers;
 import fr.pay.scim.serveur.endpoint.mapper.ScimUserMapper;
 import fr.pay.scim.serveur.endpoint.patch.PatchOp;
 import fr.pay.scim.serveur.endpoint.patch.PatchProcess;
@@ -53,6 +59,36 @@ public class UsersEndPoint {
 	}
 	
 	
+	// Search: GET https://example.com/{v}/{resource}?filter={attribute}{op}{value}&sortBy={attributeName}&sortOrder={ascending|descending}
+	@Operation(summary = "Search for users")
+	@ApiResponses(value = { 
+			@ApiResponse(responseCode = "200", description = "users trouvés", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ScimUser.class))})
+			})
+	@GetMapping("")
+	@ResponseStatus(code = HttpStatus.OK)
+	public ScimUsers all(
+			@Parameter(description = "startIndex") @RequestParam(defaultValue = "1", required = false) int startIndex,
+			@Parameter(description = "count") @RequestParam(defaultValue = "5", required = false) int count
+			) {
+		
+		List<User> users = usersService.all();
+		
+		List<ScimUser> scimUser = users.stream()
+				.skip(startIndex-1)
+				.limit(count)
+				.map(p -> mapper.mapper(p, null))
+				.collect(Collectors.toList());
+		
+		ScimUsers scimUsers = new ScimUsers();
+		scimUsers.setTotalResults(users.size());
+		scimUsers.setItemsPerPage(scimUser.size());
+		scimUsers.setStartIndex(startIndex);
+		scimUsers.setResources(scimUser);
+		
+		return scimUsers;
+	}
+	
+	
 	//  Read: GET https://example.com/{v}/{resource}/{id}
 	//  RFC : 	200 OK
 	//			Content-Type: application/scim+json
@@ -85,10 +121,7 @@ public class UsersEndPoint {
 				.body(scimUser);
 	}
 
-	
-	
-	
-	
+		
 	//  Create: POST https://example.com/{v}/{resource}
 	//  RFC : 	201 Created
 	//			Content-Type: application/scim+json
@@ -122,7 +155,6 @@ public class UsersEndPoint {
 				.header("Location", location)
 				.body(scimUser);
 	}
-
 	
 	
 	//  Replace: PUT https://example.com/{v}/{resource}/{id}
@@ -161,8 +193,7 @@ public class UsersEndPoint {
 				.body(scimUser);
 	}
 
-	
-	
+		
 	// Update: PATCH https://example.com/{v}/{resource}/{id}	
 	@Operation(summary = "Patch a user.")
 	@ApiResponses(value = { 
@@ -203,8 +234,7 @@ public class UsersEndPoint {
 				.body(scimUserUpdated);
 	}
 	
-	
-	
+		
 	// Delete: DELETE https://example.com/{v}/{resource}/{id}
 	// RFC :	204 No Content
 	@Operation(summary = "Deleting a user.")
@@ -231,9 +261,7 @@ public class UsersEndPoint {
 	}
 	
 	
-	
-	
-//// Search: GET https://example.com/{v}/{resource}?ﬁlter={attribute}{op}{value}&sortBy={attributeName}&sortOrder={ascending|descending}
+
 ////  Bulk: POST https://example.com/{v}/Bulk
 	
 }

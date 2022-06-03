@@ -1,6 +1,8 @@
 package fr.pay.scim.serveur.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -36,6 +38,11 @@ public class UsersService {
 	
 	public void delete(String id) {
 		users.remove(id);
+	}
+
+
+	public List<User> all() {
+		return  new ArrayList<>(users.values());
 	}
 	
 }

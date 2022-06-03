@@ -14,7 +14,7 @@ import fr.pay.scim.serveur.service.entity.user.User;
 @Service
 public class ScimUserMapper {
 
-
+	
 	private ScimUserMeta mapperMeta(User user, String location) {
 		ScimUserMeta scimMeta = new ScimUserMeta();
 		scimMeta.setCreated(user.getCreated());
@@ -23,6 +23,7 @@ public class ScimUserMapper {
 		scimMeta.setVersion(null);
 		return scimMeta;
 	}
+	
 	
 	private ScimName mapperName(User user) {
 		ScimName scimName = null;
@@ -37,6 +38,7 @@ public class ScimUserMapper {
 		}
 		return scimName;
 	}
+	
 	
 	private List<ScimEmail> mapperEmail(User user) {
 		List<ScimEmail> emails = null;
@@ -68,8 +70,6 @@ public class ScimUserMapper {
 	}
 	
 	
-	
-
 	public User mapper(ScimUser scimUser) {
 		User user = new User();
 		user.setId(scimUser.getId());
