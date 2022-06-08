@@ -26,17 +26,16 @@
 			<groupId>org.glassfish.jersey.media</groupId>
 			<artifactId>jersey-media-json-jackson</artifactId>
 		</dependency>
-		
-		
+
+
 		<!-- ================= -->
 		<!-- Mappeur -->
 		<!-- ================= -->
 		<dependency>
 			<groupId>org.modelmapper</groupId>
 			<artifactId>modelmapper</artifactId>
-			<version>2.3.4</version>
 		</dependency>
-		
+
 		<!-- ================= -->
 		<!-- Swagger Open API -->
 		<!-- ================= -->
@@ -44,18 +43,13 @@
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-ui</artifactId>
-			<version>1.6.8</version>
 		</dependency>
-		
-		<!-- ================= -->
-		<!-- lombok -->
-		<!-- ================= -->
 
 		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<scope>provided</scope>
+			<groupId>com.github.javafaker</groupId>
+			<artifactId>javafaker</artifactId>
+			<version>1.0.2</version>
 		</dependency>
-		
+
 	</dependencies>
 </project>

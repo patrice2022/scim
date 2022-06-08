@@ -26,6 +26,7 @@ import fr.pay.scim.serveur.endpoint.entity.user.ScimUsers;
 import fr.pay.scim.serveur.endpoint.mapper.ScimUserMapper;
 import fr.pay.scim.serveur.endpoint.patch.PatchOp;
 import fr.pay.scim.serveur.endpoint.patch.PatchProcess;
+import fr.pay.scim.serveur.exception.ConflictException;
 import fr.pay.scim.serveur.exception.NotFoundException;
 import fr.pay.scim.serveur.exception.ScimException;
 import fr.pay.scim.serveur.service.UsersService;
@@ -68,7 +69,7 @@ public class UsersEndPoint {
 	@ResponseStatus(code = HttpStatus.OK)
 	public ScimUsers all(
 			@Parameter(description = "startIndex") @RequestParam(defaultValue = "1", required = false) int startIndex,
-			@Parameter(description = "count") @RequestParam(defaultValue = "5", required = false) int count
+			@Parameter(description = "count") @RequestParam(defaultValue = "10", required = false) int count
 			) {
 		
 		List<User> users = usersService.all();
@@ -139,6 +140,10 @@ public class UsersEndPoint {
 			) throws ScimException {
 
 		log.info("Demande de création de compte : {}", scimUser);
+		
+		if (usersService.readByUsername(scimUser.getUserName()) != null) {
+			throw new ConflictException("User already exists.");			
+		}
 		
 		User user = mapper.mapper(scimUser);
 		

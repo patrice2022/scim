@@ -1,48 +1,69 @@
 package fr.pay.scim.serveur.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import fr.pay.scim.serveur.repository.UserRepository;
+import fr.pay.scim.serveur.repository.entity.UserEntity;
 import fr.pay.scim.serveur.service.entity.user.User;
+import fr.pay.scim.serveur.service.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
 public class UsersService {
 
-	private Map<String, User> users = new HashMap<>();
+	@Autowired
+	private UserRepository repository;
 
+	private UserMapper userMapper = new UserMapper();
+	
+	
 	
 	public User read(String id) {
-		return users.get(id);
+		UserEntity userEntity = repository
+				.findById(id).orElse(null);
+		return userMapper.mapper(userEntity);
+	}
+	
+	
+	public User readByUsername(String username) {
+		UserEntity userEntity = repository
+				.findByUsername(username);
+		if (userEntity == null) {
+			return null;
+		} else {
+			return userMapper.mapper(userEntity);
+		}
+		
 	}
 
 
 	public User create(User user) {
-		user.setId(UUID.randomUUID().toString());
-		users.put(user.getId(), user);
-		return read(user.getId());
+		return userMapper.mapper(repository.save(userMapper.mapper(user)));
 	}
 	
 	
 	public User update(String id, User user) {
-		users.put(id, user);
-		return user;
+		user.setId(id);
+		return userMapper.mapper(repository.save(userMapper.mapper(user)));
 	}
 	
 	
 	public void delete(String id) {
-		users.remove(id);
+		repository.deleteById(id);
 	}
 
 
 	public List<User> all() {
-		return  new ArrayList<>(users.values());
+		List<User> retour = repository
+				.findAll()
+				.stream()
+				.map(u -> userMapper.mapper(u)).collect(Collectors.toList());
+		return retour;
 	}
 	
 }

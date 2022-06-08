@@ -33,4 +33,16 @@ public class UserExceptionAdvice {
 		
 		return new ResponseEntity<ScimError>(error, HttpStatus.BAD_REQUEST);
 	}
+	
+	
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<ScimError> methodArgumentNotValidExceptionHandler(Exception ex) {
+		 
+        ScimError error = new ScimError();
+		error.setStatus("500");
+		error.setDetail(ex.getMessage());
+		
+		return new ResponseEntity<ScimError>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+	
 }

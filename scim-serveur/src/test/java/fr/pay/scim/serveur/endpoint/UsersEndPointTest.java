@@ -84,6 +84,9 @@ class UsersEndPointTest {
 																String id = (String) invocation.getArguments()[0];  
 																return users.get(id); } );	
 		
+		Mockito.when(usersService.readByUsername("johndo")).thenReturn(user1);	
+
+		
 		Mockito.when(usersService.create(any(User.class))).thenAnswer(invocation -> { 
 																User u = (User) invocation.getArguments()[0];  
 																u.setId(UUID.randomUUID().toString());
@@ -187,6 +190,19 @@ class UsersEndPointTest {
 	}
 	
 	
+	@Test
+	@DisplayName("RFC7644 - Création d'un compte utilisateur (Conflict)")
+	void testPostDoublon() throws Exception {
+		
+		ScimUser scimUser = new ScimUser();
+		scimUser.setUserName("johndo");
+		
+		mockMvc.perform(MockMvcRequestBuilders
+							.post("/Users")
+							.contentType(MediaType.APPLICATION_JSON)
+							.content(objectMapper.writeValueAsString(scimUser)))
+						.andExpect(status().isConflict());
+	}
 	
 	//-----------------------------------------------------------
 	//  Put
