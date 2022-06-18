@@ -1,9 +1,14 @@
 package fr.pay.scim.serveur.repository.entity;
 
+import java.util.Date;
+
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -23,20 +28,26 @@ public class UserEntity {
 	@Column(insertable = true, updatable = false)
 	private String id;
 
-//	private String externalId;
+	@Column(unique = true, nullable = true)
+	private String externalId;
 	
 	@Column(unique = true, nullable = false)
 	private String userName;
 	
-//	private String displayName;
-//	
-//	private String firstName;
-//
-//	private String lastName;
-//
-//	private String email;
-//	
-//	private String title;
+	@Column
+	private String displayName;
+	
+	@Column
+	private String firstName;
+
+	@Column
+	private String lastName;
+
+	@Column
+	private String email;
+	
+	@Column
+	private String title;
 	
 	
 	
@@ -45,15 +56,16 @@ public class UserEntity {
 //	@JoinTable(name = "user_group")
 //	private Set<GroupEntity> groups = new HashSet<>(); 
 //	
-//	@Basic(optional = false)
-//	@Column(insertable = false, updatable = false, columnDefinition = "TIMESTAMP Default CURRENT_TIMESTAMP")
-//	@Temporal(TemporalType.TIMESTAMP)
-//	private Date created;
-//	
-//	@Basic(optional = false)
-//	@Column(insertable = false, updatable = false, columnDefinition = "TIMESTAMP Default CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
-//	@Temporal(TemporalType.TIMESTAMP)
-//	private Date lastModified = new Date();
+	
+	@Basic(optional = false)
+	@Column(insertable = false, updatable = false, columnDefinition = "TIMESTAMP Default CURRENT_TIMESTAMP")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date created;
+	
+	@Basic(optional = false)
+	@Column(insertable = false, updatable = false, columnDefinition = "TIMESTAMP Default CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date lastModified = new Date();
 	
 
 }

@@ -521,8 +521,8 @@ public class ScimUser {
 	 * 
 	 * This attribute has a mutability of "readOnly".
 	 */
-	@Schema(accessMode = Schema.AccessMode.READ_ONLY)
-	private List<ScimUserGroup> groups;
+//	@Schema(accessMode = Schema.AccessMode.READ_ONLY)
+//	private List<ScimUserGroup> groups;
 
 	/**
 	 * A list of entitlements for the user that represent a thing the user has. An

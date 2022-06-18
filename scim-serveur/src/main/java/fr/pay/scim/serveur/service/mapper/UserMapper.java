@@ -11,7 +11,12 @@ public class UserMapper {
 	
 	public User mapper(UserEntity userEntity) {
 		ModelMapper modelMapper  = new ModelMapper();
-		return modelMapper.map(userEntity, User.class);
+		User user = modelMapper.map(userEntity, User.class);
+		
+		user.setGivenName(userEntity.getFirstName());
+		user.setFamilyName(userEntity.getLastName());
+		
+		return user;
 	}
 	
 	
@@ -19,7 +24,10 @@ public class UserMapper {
 		ModelMapper modelMapper  = new ModelMapper();
 		UserEntity entity = modelMapper.map(user, UserEntity.class);
 		
+		entity.setFirstName(user.getGivenName());
+		entity.setLastName(user.getFamilyName());
 //		entity.setCreated(new Date());
+		
 		return entity;
 	}
 	
